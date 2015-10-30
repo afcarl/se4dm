@@ -1,0 +1,41 @@
+#!/usr/bin/env python 
+from __future__ import print_function, division
+import sys
+sys.dont_write_bytecode = True
+
+"""
+
+# Python to Markdown
+
++ Extract markup in Python multi-line comments.
++ Mark Python code as pre-formatted text
+
+"""
+import sys
+
+def py2md(lines):
+  quotes, inside,lst,n = 0,True,[],1
+  if isinstance(lines,str):
+    lines = lines.splitlines()
+  for line in lines:
+    line = line.rstrip()
+    if line == '"""':
+       inside = not inside
+       if inside:
+         line = "```"
+       else:
+         line = "```" if quotes > 1 else ""
+       quotes += 1
+       if quotes == 1: continue    
+    else:
+      if inside and quotes:
+        line = '%s:    %s' % (n,line)
+        n += 1
+    if  quotes:
+      lst += [line] 
+  if inside:
+    lst += ["```"]
+  return "\n".join(lst)
+
+
+print(py2md(sys.stdin.readlines()))

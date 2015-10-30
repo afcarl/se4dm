@@ -1,0 +1,3 @@
+if [ -f "FOOTER.html" ]; then
+   bash FOOTER.html
+fi
