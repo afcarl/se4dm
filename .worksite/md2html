@@ -28,4 +28,6 @@ def contents(f):
 Output
 
 """
-print(marked(''.join(sys.stdin.readlines())))
+print(marked(''
+       .join(sys.stdin.readlines()))
+       .replace("code>","pre>"))

@@ -29,7 +29,7 @@ def py2md(lines):
        if quotes == 1: continue    
     else:
       if inside and quotes:
-        line = '%s:    %s' % (n,line)
+        line = '    %4s:  %s' % (n,line)
         n += 1
     if  quotes:
       lst += [line] 
