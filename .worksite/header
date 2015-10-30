@@ -1,8 +1,0 @@
-tit=`$1/title $2`
-if [ -f "HEADER.html" ]; then
-   bash HEADER.html "$tit" 
-elif [ -f "$1/../HEADER.html" ]; then
-   cat $1/../HEADER.html "$tit"
-fi
-
-

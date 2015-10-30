@@ -8,6 +8,14 @@ Marks=$(wildcard *.md)
 Pys2Html=$(Pys:.py=.html)
 Mds2Html=$(Marks:.md=.html)
 
+ifdef GATEWAY_INTERFACE
+	python=$(HERE)/../env/bin/python
+else
+	pythton=python
+endif
+
+md2html="$(python) -m markdown"
+
 all: 
 	@$(foreach x,$(Dirs), \
 		echo $x     ;  \
@@ -17,14 +25,10 @@ all:
 htmls: $(Mds2Html) $(Pys2Html)
 
 %.html : %.py
-	$(P)/header "$P" $< > $@
-	cat $< | $P/py2md | $P/md2html >> $@
-	$(P)/footer  >> $@	
+	cat $< | $P/py2md | $(md2html) | $P/page "$P"  >> $@
 	@ git add $@
 
 %.html : %.md
-	$(P)/header "$P" $< > $@
-	@ cat $< |  $P/md2html >> $@
-	$(P)/footer  >> $@	
+	@ cat $< |  $(md2html) | $/page "$P$"  >> $@
 	@ git add $@
 
