@@ -1,6 +1,4 @@
-Dirs = $(shell find . -type d | grep -v '^\.')
-Here=$(PWD)/.worksite
-P=$(Here)
+P=$(PWD)/.worksite
 
 Pys=$(wildcard *.py)
 Marks=$(wildcard *.md)
@@ -9,26 +7,53 @@ Pys2Html=$(Pys:.py=.html)
 Mds2Html=$(Marks:.md=.html)
 
 ifdef GATEWAY_INTERFACE
-	python=$(HERE)/../env/bin/python
+	python=$P/../env/bin/python
 else
-	pythton=python
+	python=$(shell which python)
 endif
 
-md2html="$(python) -m markdown"
+md2html="$(python) -m markdown          \
+	-x markdown.extensions.extra     \
+	-x markdown.extensions.codehilite \
+	-x markdown.extensions.toc"
 
-all: 
-	@$(foreach x,$(Dirs), \
-		echo $x     ;  \
-		cd   $x     ;   \
-		$(MAKE) -f $P/makes.mk htmls; )
+publish: htmls
 
 htmls: $(Mds2Html) $(Pys2Html)
 
 %.html : %.py
-	cat $< | $P/py2md | $(md2html) | $P/page "$P"  >> $@
+	cat $< | $P/py2md | $(md2html) | $P/page "$P" >> $@
 	@ git add $@
 
 %.html : %.md
 	@ cat $< |  $(md2html) | $/page "$P$"  >> $@
 	@ git add $@
+
+
+typo: ready
+	@- git status
+	@- git commit -am "saving"
+	@- git push origin master # <== update as needed
+
+commit: ready
+	@- git status
+	@- git commit -a
+	@- git push origin master
+
+update: ready
+	@- git pull origin master
+
+status: ready
+	@- git status
+
+ready:
+	@git config --global credential.helper cache
+	@git config credential.helper 'cache --timeout=3600'
+
+
+xall: 
+	@$(foreach x,$(Dirs), \
+		echo $x     ;  \
+		cd   $x     ;   \
+		$(MAKE) -f $P/makes.mk htmls; )
 

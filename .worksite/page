@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+Title=`cat _ | gawk '/^# / {$1=""; print $0; exit }'`
+
+if [ -f "HEADER.html" ]; then
+   cat HEADER.html
+elif [ -f "$1/../HEADER.html" ]; then
+   cat $1/../HEADER.html 
+fi |
+sed "s/_TITLE_/$Title/" 
+
+cat -
+
+[ -f "FOOTER.html" ] && cat FOOTER.html
+
+
