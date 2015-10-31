@@ -6,7 +6,6 @@
 cols
 
 """
-
 def c():
   return 2
 

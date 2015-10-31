@@ -1,4 +1,3 @@
-#!/usr/bin/env python 
 from __future__ import print_function, division
 import sys
 sys.dont_write_bytecode = True
@@ -22,9 +21,9 @@ def py2md(lines):
     if line == '"""':
        inside = not inside
        if inside:
-         line = "```"
+         line = "~~~~"
        else:
-         line = "```" if quotes > 1 else ""
+         line = "~~~~\n:::python" if quotes > 1 else ""
        quotes += 1
        if quotes == 1: continue    
     else:
@@ -34,7 +33,7 @@ def py2md(lines):
     if  quotes:
       lst += [line] 
   if inside:
-    lst += ["```"]
+    lst += ["~~~~"]
   return "\n".join(lst)
 
 

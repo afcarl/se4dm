@@ -12,21 +12,24 @@ else
 	python=$(shell which python)
 endif
 
-md2html="$(python) -m markdown          \
-	-x markdown.extensions.extra     \
-	-x markdown.extensions.codehilite \
-	-x markdown.extensions.toc"
+Py2md = $(python) $P/py2md
+Page  = bash $P/page $P
+
+md2html=$(python) -m markdown            \
+         -x markdown.extensions.extra     \
+         -x markdown.extensions.codehilite \
+         -x markdown.extensions.toc
 
 publish: htmls
 
 htmls: $(Mds2Html) $(Pys2Html)
 
 %.html : %.py
-	cat $< | $P/py2md | $(md2html) | $P/page "$P" >> $@
+	@ cat $< | $(Py2md) | $(md2html) | $(Page) > $@;
 	@ git add $@
 
 %.html : %.md
-	@ cat $< |  $(md2html) | $/page "$P$"  >> $@
+	@ cat $<            | $(md2html) | $(Page) > $@;
 	@ git add $@
 
 
@@ -50,10 +53,4 @@ ready:
 	@git config --global credential.helper cache
 	@git config credential.helper 'cache --timeout=3600'
 
-
-xall: 
-	@$(foreach x,$(Dirs), \
-		echo $x     ;  \
-		cd   $x     ;   \
-		$(MAKE) -f $P/makes.mk htmls; )
 

@@ -1,17 +1,22 @@
 #!/bin/bash
 
-
-Title=`cat _ | gawk '/^# / {$1=""; print $0; exit }'`
-
 if [ -f "HEADER.html" ]; then
-   cat HEADER.html
+   cat HEADER.html -
 elif [ -f "$1/../HEADER.html" ]; then
-   cat $1/../HEADER.html 
-fi |
-sed "s/_TITLE_/$Title/" 
+   cat $1/../HEADER.html -
+fi  |
+gawk '
 
-cat -
+/<h1/ { str = $0
+         gsub(/h1/,"title",str)
+       }
+       { out = out "\n" $0 }
+END    { gsub(/<title>[^<\n]*<\/title>/,str,out)
+         print out}
+'
 
-[ -f "FOOTER.html" ] && cat FOOTER.html
+if [ -f "FOOTER.html" ]; then
+   cat FOOTER.html
+fi
 
 
