@@ -70,7 +70,7 @@ class Num(Log):
       i.sd = (i.m2/(i.n - 1))**0.5
   def norm(i,z):
     return (z - i.lo) / (i.hi - i.lo + 10e-32)
-
+  
 class Sym(Log):
   def reset(i):
     i.most, i.mode, i.all = 1,0,None,{}

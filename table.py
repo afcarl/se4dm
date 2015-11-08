@@ -9,6 +9,20 @@ sys.dont_write_bytecode = True
 Tables keep `Some` values for each column in a string.
 
 """
+from row import *
+
+def tables(src):
+  overall = all =None
+  for cells in cols(src):
+    if all:
+      klass = cells[overall.dep.klass.pos]
+      all[klass] += cells
+      overall    += cells
+    else:
+      all     = DefaultDict(lambda: Table(cells))
+      overall = Table(cells)
+  return all,overall
+  
 class Table:
   def __init__(i,header,what="_all_",rows=[]):
     i.header= header
@@ -36,22 +50,24 @@ class Table:
 ## Helper: map column name to column types
 
 """
+
 def col(t,pos,name):
-  def klassp(i,x) : return "=" in x
-  def lessp( i,x) : return "<" in x
-  def morep( i,x) : return ">" in x
-  def nump(  i,x) : return "$" in x or morep(x) or lessp(x)
-  what   = Num if i.nump(name) else Sym
+  def klassp(x) : return "=" in x
+  def lessp( x) : return "<" in x
+  def morep( x) : return ">" in x
+  def nump(  x) : return "$" in x or morep(x) or lessp(x)
+  
+  what   = Num if nump(name) else Sym
   z      = what()
   z.pos  = pos
   z.name = name
   also   = t.nums 
-  if   t.morep(name) : t.dep.more += [z]
-  elif t.lessp(name) : t.dep.less += [z]
-  elif t.nump(name)  : t.indep.nums += [z]
+  if   morep(name) : t.dep.more += [z]
+  elif lessp(name) : t.dep.less += [z]
+  elif nump(name)  : t.indep.nums += [z]
   else:
     also = t.syms
-    if t.klassp(name): t.dep.klass = z
+    if klassp(name): t.dep.klass = z
     else             : t.indep.syms += [z]
   t.all += [z]
   also  += [z]
