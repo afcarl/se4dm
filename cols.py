@@ -9,6 +9,8 @@ sys.dont_write_bytecode = True
 ## Configuration
 
 """
+from lib import *
+
 @setting
 def COL(): return o(
     cache     = 256,
@@ -30,7 +32,7 @@ class Some:
     # note, usually 256 or 128 or 64 (if brave)
     i.keep = keep or the.COL.cache
     i.n, i.any  = 0,[]
-  def add(i,x):
+  def __add__(i,x):
     i.n += 1
     now = len(i.any)
     if now < i.keep:       

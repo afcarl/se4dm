@@ -36,11 +36,12 @@ class unittest:
       test()
     except Exception,e:
       unittest.fails += 1
-      i.report(test)
-  def report(i,test):
-    print(traceback.format_exc())
-    print(unittest.score(),':',test.__name__)
-
+      i.report(test,e)
+  def report(i,test,e):
+    _, _, tb = sys.exc_info()
+    f, line, fun, what = traceback.extract_tb(tb)[-1]
+    print('{}: line {}, in {} ==> {} {}'.format(
+        f, line, fun, what,e))
 """
 
 ## Generic containers
@@ -88,4 +89,3 @@ class setting:
       setting.funs[k] = v()
 
 the=setting.all
-"""

@@ -7,6 +7,7 @@ sys.dont_write_bytecode = True
 # Lib
 
 """
+import random
 from base import *
 """
 
