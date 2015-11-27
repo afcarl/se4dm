@@ -38,8 +38,10 @@ def _walkString():
 def _walkFile(): 
   _walk( FILE('data/weather.csv') )
 
-@ok 
+#@ok 
 def _walkZip():
-  _walk( cols( ZIP('data/data.zip',
-                   'weather.csv') )
+  _walk( ZIP('data/data.zip',
+                   'weather.csv')  )
+
+_walkZip()
 

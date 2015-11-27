@@ -23,7 +23,7 @@ class unittest:
   tries = fails = 0  #  tracks the record so far
   @staticmethod
   def enough():
-    print(unittest.score()); exit()
+    print(unittest.score())
   @staticmethod
   def score():
     t = unittest.tries
