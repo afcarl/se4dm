@@ -2,15 +2,14 @@ from __future__ import print_function, division
 import sys
 sys.dont_write_bytecode = True
 
-import  lib
+
 """
 
 # Walk
 
 """
-
 import zipfile,re,sys
-
+from lib import *
 """
 
 # Iterators for Walking CSV Data
@@ -26,33 +25,27 @@ Also assumes first line is column names.
 The function `FROM` returns iterators that can handle different kinds of data.
 
 """
-def lines(x):
-  "Yields one line at a time."
-  def strings(str):
-    tmp=""
-    for ch in str:
-      if ch == "\n":
-        yield tmp
-        tmp = ''
-      else:
-        tmp += ch
-    if tmp:
+def stringer(str):
+  tmp=""
+  for ch in str:
+    if ch == "\n":
       yield tmp
-  def zips((zipfile,file)):
-    with zipfile.ZipFile(zipfile,'r') as z:
-      with z.open(file) as f:
-        for line in f:
-          yield line
-  def files(filename):
-    with open(filename) as f:
+      tmp = ''
+    else:
+      tmp += ch
+  if tmp:
+    yield tmp
+
+def zipper(zip,file):
+  with zipfile.ZipFile(zip, 'r') as z:
+    with z.open(file) as f:
       for line in f:
-        yield line.replace("\n", "")
-  # ---------------------------------
-  if   isinstance(x,tuple) : f=zips
-  elif x[-4:]==".csv"      : f=files
-  else                     : f=strings
-  for line in f(x):
-    yield line
+        yield line
+
+def filer(filename):
+  with open(filename) as f:
+    for line in f:
+      yield line
 """
 
 ## Iterators
@@ -61,8 +54,8 @@ def lines(x):
 def rows(src):
   "Yield all non-blank lines,joining lines that end in ','."
   b4 = ''
-  for line in src:
-    line = re.sub(r"[\r\t ]*","",line)
+  for line in src():
+    line = re.sub(r"[\n\r\t ]*","",line)
     line = re.sub(r"#.*","",line)
     if not line: continue # skip blanks
     if line[-1] == ',':   # maybe, continue lines
@@ -86,8 +79,7 @@ def cols(src):
     if want:
       yield n,[ comp(lst[col]) for col,comp in want ]
     else:
-      want = [(col,complier(name))
+      want = [(col,compile(name))
                for col,name in enumerate(lst)
                if name[0] != "?" ]
-      yield n,[name for name in list if name[0] != "?"] 
-      
+      yield n,[name for name in want] 

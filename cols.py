@@ -51,18 +51,18 @@ class Log:
     i.reset()
     i.n = 0 
     i.cache = Some()
-    map(i.add,inits)
-  def add(i,x):
+    map(i.__add__,inits)
+  def __add__(i,x):
     if x != the.COL.missing:
-      i.add1(x)
       i.n += 1
-      i.cache.add(x)
+      i.cache + x
+      i._add(x)
 
 class Num(Log):
   def reset(i):
     i.hi = i.lo = None
     i.mu = i.sd = i.m2 = 0  
-  def add1(i,z):
+  def _add(i,z):
     i.lo  = min(z,i.lo)
     i.hi  = max(z,i.hi)
     delta = z - i.mu;
@@ -76,7 +76,7 @@ class Num(Log):
 class Sym(Log):
   def reset(i):
     i.most, i.mode, i.all = 1,0,None,{}
-  def add1(i,z):
+  def _add(i,z):
     tmp = i.all[z] = i.all.get(z,0) + 1
     if tmp > i.most:
       i.most,i.mode = tmp,z

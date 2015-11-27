@@ -9,13 +9,14 @@ sys.dont_write_bytecode = True
 """
 
 class Row:
+  n = -1
   def __init__(i,t):
+    Row.n = i.n = Row.n + 1
     i.t, i.dists = t,{}
   def dist(j,k):
-    jid, kid = j.n, k.n
-    if jid == kid : return 0
-    if jid > kid  : return i.dist(k,j)
-    key = (jid,kid)
+    if j.n == k.n : return 0
+    if j.n > k.n  : return k.dist(j)
+    key = (j.n, k.n)
     if not key in j.dists :
       j.dists[key] = dist(i.t,j,k)
     return j.dists[key]
@@ -23,19 +24,13 @@ class Row:
     lst = lst or t.rows
     out = j
     for k in lst:
-      tmp = dist(i.t,i,j)
+      tmp = dist(i.t,j,k)
       if tmp and better(tmp,best):
         out,best = k,tmp
     return best
   def closest(j,lst=None):
     return j.furthest(lst,best=1e32,better=lt)
-  def nn(i,lst=None):
-    lst = lst or t.rows
-    nn = {}
-    for r1 in lst:
-      nn[r1]  = r1.closest(lst)
-    return nn
-  def knn(i,k=5,lst=None):
+  def knn(i,k=1,lst=None):
     lst = lst or t.rows
     out = {}
     for r1 in lst:

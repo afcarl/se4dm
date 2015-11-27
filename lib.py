@@ -19,6 +19,15 @@ rseed = random.seed
 gt    = lambda x,y: x > y
 lt    = lambda x,y: x < y
 
+@setting
+def SYS(): return o(
+    seed=1
+    )
+
+def reset(seed = None):
+  setting.reset()
+  rseed(seed or the.SYS.seed)
+  
 def shuffle(lst):
   random.shuffle(lst)
   return lst

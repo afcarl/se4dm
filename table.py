@@ -10,6 +10,7 @@ Tables keep `Some` values for each column in a string.
 
 """
 from row import *
+from lib import *
 
 def tables(src):
   overall = all =None
@@ -24,9 +25,10 @@ def tables(src):
   return all,overall
   
 class Table:
-  def __init__(i,header,what="_all_",rows=[]):
+  def __init__(i,header,what="_all_",rows=[],maker=identity):
     i.header= header
     i.what  = what
+    i.maker = maker
     i.dep   = o(less=[], more=[], klass=None)
     i.indep = o(nums=[], syms=[])
     i.nums, i.syms, i.all = [],[],[]
@@ -37,11 +39,12 @@ class Table:
     i.there = There(i)
   def clone(i,what=None,keep=None,rows=[]):
     return Table(i.header,
-                 what= what or i.what,
-                 keep= keep or i.rows.keep,
-                 rows= rows)
+                 what=  what or i.what,
+                 keep=  keep or i.rows.keep,
+                 maker= i.maker,
+                 rows=  rows)
   def __iadd__(i,cells):
-    i.rows.add(Row(cells))
+    i.rows.add(i.maker(cells))
     for col in i.all:
       col += cells[col.pos]
     return i
@@ -56,7 +59,7 @@ def col(t,pos,name):
   def lessp( x) : return "<" in x
   def morep( x) : return ">" in x
   def nump(  x) : return "$" in x or morep(x) or lessp(x)
-  
+  #---  
   what   = Num if nump(name) else Sym
   z      = what()
   z.pos  = pos

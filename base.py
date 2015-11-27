@@ -86,6 +86,6 @@ class setting:
   @staticmethod
   def reset():
     for k,v in setting.funs.items():
-      setting.funs[k] = v()
+      setting.all[k] = v() 
 
 the=setting.all
