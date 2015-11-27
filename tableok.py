@@ -32,10 +32,10 @@ def _table0(src):
 def _table1():
   _table0( STRING(weather) )
 
-#@ok
+@ok
 def _tables():
   _table0( FILE('data/weather.csv') )
 
-#@ok 
+@ok 
 def _table3():
   _table0( ZIP('data/data.zip', 'weather.csv') )
