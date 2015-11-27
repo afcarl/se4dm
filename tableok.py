@@ -5,8 +5,8 @@ from table import *
 
 weather="""
 outlook,
-temperature,
-humidity,?windy,play
+:temperature,
+$humidity,?windy,=play
 sunny    , 85, 85, FALSE, no  # an interesting case
 sunny    , 80, 90, TRUE , no
 overcast , 83, 86, FALSE, yes
@@ -25,22 +25,17 @@ overcast , 81, 75, FALSE, yes
 rainy    , 71, 91, TRUE , no
 """
 
+def _table0(src):
+  print( tables(src))
+    
 @ok
 def _table1():
-  src = lambda: stringer(weather)
-  for x in tables(src):
-    print(x)
+  _table0( STRING(weather) )
 
-@ok
+#@ok
 def _tables():
-  src = lambda: filer('data/weather.csv')
-  for x in tables(src):
-    print(x)
+  _table0( FILE('data/weather.csv') )
 
-@ok 
+#@ok 
 def _table3():
-  src = lambda: zipper('data/data.zip',
-                       'weather.csv')
-  for x in tables(src):
-    print(x)
-
+  _table0( ZIP('data/data.zip', 'weather.csv') )

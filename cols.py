@@ -75,7 +75,7 @@ class Num(Log):
   
 class Sym(Log):
   def reset(i):
-    i.most, i.mode, i.all = 1,0,None,{}
+    i.most, i.mode, i.all = 1,0,{}
   def _add(i,z):
     tmp = i.all[z] = i.all.get(z,0) + 1
     if tmp > i.most:

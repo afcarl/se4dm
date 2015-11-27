@@ -4,14 +4,13 @@ sys.dont_write_bytecode = True
 
 from walkcsv import *
 
-
 weather="""
 outlook,
-temperature,
-humidity,?windy,play
+:temperature,
+$humidity,?windy,play
 sunny    , 85, 85, FALSE, no  # an interesting case
 sunny    , 80, 90, TRUE , no
-overcast , 83, 86, FALSE, yes
+overcast , 83, ?, FALSE, yes
 rainy    , 70, 96, FALSE, yes
 rainy    , 68, 80, FALSE, yes
 rainy    , 65, 70, TRUE , no
@@ -27,22 +26,20 @@ overcast , 81, 75, FALSE, yes
 rainy    , 71, 91, TRUE , no
 """
 
-@ok
-def _walkcsv1():
-  src = lambda: stringer(weather)
+def _walk(src):
   for x in cols(src):
     print(x)
+    
+@ok
+def _walkString():
+  _walk( STRING(weather) )
 
 @ok
-def _walkcsv2():
-  src = lambda: filer('data/weather.csv')
-  for x in cols(src):
-    print(x)
+def _walkFile(): 
+  _walk( FILE('data/weather.csv') )
 
 @ok 
-def _walkcsv3():
-  src = lambda: zipper('data/data.zip',
-                       'weather.csv')
-  for x in cols(src):
-    print(x)
+def _walkZip():
+  _walk( cols( ZIP('data/data.zip',
+                   'weather.csv') )
 

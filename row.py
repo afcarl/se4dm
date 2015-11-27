@@ -7,6 +7,7 @@ sys.dont_write_bytecode = True
 # Rows
 
 """
+from lib import *
 
 class Row:
   n = -1

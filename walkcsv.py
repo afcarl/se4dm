@@ -10,6 +10,19 @@ sys.dont_write_bytecode = True
 """
 import zipfile,re,sys
 from lib import *
+
+@setting
+def CSV(): return o(
+    whitespace = r"[\n\r\t ]*",
+    comment    = r"#.*",
+    delimiter  = ",",
+    ignore     = "?",
+    klass      = "=",
+    less       = "<",
+    more       = ">",
+    float      = "$",
+    int        = ":"
+    )
 """
 
 # Iterators for Walking CSV Data
@@ -24,25 +37,29 @@ Also assumes first line is column names.
 
 The function `FROM` returns iterators that can handle different kinds of data.
 
-"""
-def stringer(str):
-  tmp=""
-  for ch in str:
-    if ch == "\n":
-      yield tmp
-      tmp = ''
-    else:
-      tmp += ch
-  if tmp:
-    yield tmp
 
-def zipper(zip,file):
+"""
+
+def lines(f):
+  def yieldLines(*lst):
+    for line in f(*lst):
+      yield line
+  return yieldLines
+
+@lines
+def STRING(str):
+  for line in str.splitlines():
+    yield line
+
+@lines
+def ZIP(zip,file):
   with zipfile.ZipFile(zip, 'r') as z:
     with z.open(file) as f:
       for line in f:
         yield line
 
-def filer(filename):
+@lines        
+def FILE(filename):
   with open(filename) as f:
     for line in f:
       yield line
@@ -52,13 +69,15 @@ def filer(filename):
 
 """
 def rows(src):
-  "Yield all non-blank lines,joining lines that end in ','."
+  """Yield all non-blank lines,joining lines that end in ','.
+     Usually called as a sub-routine inside 'cols'.
+  """
   b4 = ''
-  for line in src():
-    line = re.sub(r"[\n\r\t ]*","",line)
-    line = re.sub(r"#.*","",line)
+  for line in src:
+    line = re.sub(the.CSV.whitespace,"",line)
+    line = re.sub(the.CSV.comment,   "",line)
     if not line: continue # skip blanks
-    if line[-1] == ',':   # maybe, continue lines
+    if line[-1] == the.CSV.delimiter: # maybe, continue lines
       b4 += line
     else:
       yield b4 + line
@@ -67,19 +86,23 @@ def rows(src):
 def cols(src):
   """Coerce row values to floats, ints or strings.
      Jump over any cols we are ignoring."""
-  def compile(x):
-    if "<" in x or ">" in x or "$" in x:
-      return float
-    return identity
   want = None
-  n=-1
   for row in rows(src):
-    n += 1
-    lst  = row.split(',')
+    lst  = row.split(the.CSV.delimiter)
     if want:
-      yield n,[ comp(lst[col]) for col,comp in want ]
+      yield [make(lst[col],how) for col,_,how in want]
     else:
-      want = [(col,compile(name))
+      want = [(col,name,maker(name))
                for col,name in enumerate(lst)
-               if name[0] != "?" ]
-      yield n,[name for name in want] 
+               if not the.CSV.ignore in name ]
+      yield [name for col,name, how,in want] 
+
+def make(str,how):
+  return str if str==the.CSV.ignore else how(str)
+
+def maker(x):
+  if the.CSV.int in x:
+    return int
+  if the.CSV.less in x or the.CSV.more in x or the.CSV.float in x:
+    return float
+  return identity
