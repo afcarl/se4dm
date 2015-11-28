@@ -71,7 +71,7 @@ Four uses cases:
 + Reset settings to defaults.
 
 """
-class setting:
+class settings:
   funs = o()
   all  = o()
   def __init__(i,f):
@@ -79,13 +79,17 @@ class setting:
     def g(**d):
       tmp = f()
       tmp.add(**d)
-      setting.all[what] = tmp
+      settings.all[what] = tmp
       return tmp
-    setting.funs[what] = g
-    setting.all[what]  = g()
+    settings.funs[what] = g
+    settings.all[what]  = g()
   @staticmethod
   def reset():
-    for k,v in setting.funs.items():
-      setting.all[k] = v() 
+    for k,v in settings.funs.items():
+      settings.all[k] = v() 
 
-the=setting.all
+def setting(f):
+  settings(f)
+  return settings.funs[f.__name__]
+
+the=settings.all

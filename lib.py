@@ -41,3 +41,24 @@ class DefaultDict(dict):
     def __getitem__(i, key):
         if key in i: return i.get(key)
         return i.setdefault(key, i.default())
+
+class Tree:
+  "k=key, v=value, kids=subs"
+  def __init__(i,k=None,v=None):
+    i.k, i.v = k,v
+    i.kids=[]
+  def left() : return i.kids[0]
+  def right(): return i.kids[1]
+  def leaves(i):
+    if i.kids:
+      for kid in i.kids:
+        yield kid.leaves()
+    else:
+      yield i
+
+def tprint(t, show=identity, depth=0, pad="|.. ",lvl=0):
+  print(pad*lvl + str(t.k), end="")
+  print(show(t.v),":", depth+1)
+  for kid in t.kids: 
+    tprint(kid, show, depth+1, pad, lvl+1)
+  

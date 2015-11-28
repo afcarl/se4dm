@@ -13,18 +13,19 @@ from walkcsv import *
 from row import *
 from cols import *
 
-def tables(src):
+def tables(src,seperate=False):
   overall = all = header = None
   for cells in cols(src):
     if all is None:
-      header = cells
-      all     = DefaultDict(lambda: Table(header))
+      header  = cells
       overall = Table(header)
+      all     = DefaultDict(lambda: Table(header))
     else:
-      klass      = cells[overall.dep.klass.pos]
-      all[klass] + cells
-      overall    + cells
-  return all,overall
+      if seperate:
+        klass  = cells[overall.dep.klass.pos]
+        all[klass] + cells
+      overall + cells
+  return (overall,all) if seperate else overall
   
 class Table:
   def __init__(i,header,what="_all_",rows=[],row=identity):
