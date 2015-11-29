@@ -35,7 +35,6 @@ def divide(lst, tiny=None,
     n0, mu0   = r.n, r.mu()
     cut, most = None, -1 
     for j,x  in enumerate(this):
-      print("x",x)
       if l.n > tiny and r.n > tiny:
         if l.mu() * (1 + small) <  r.mu(): 
           maybe = l.n/n0 * (mu0 - l.mu())**2 + \
@@ -44,7 +43,7 @@ def divide(lst, tiny=None,
             cut,most = j,maybe
       r - get(x)
       l + get(x)    
-    return cut
+    return cut 
   #----------------------------------------------
   def recurse(this, max, cut=None):
     cut = splitter(this)
@@ -59,3 +58,4 @@ def divide(lst, tiny=None,
     return t
   #---| main |-----------------------------------
   return recurse(sorted(lst,key=get),max-2)
+
