@@ -9,15 +9,20 @@ sys.dont_write_bytecode = True
 """
 import random
 from base import *
+import  math 
 """
 
 ## Basic Utilities
 
 """
-r     = random.random
-rseed = random.seed
-gt    = lambda x,y: x > y
-lt    = lambda x,y: x < y
+r      = random.random
+rseed  = random.seed
+gt     = lambda x,y: x > y
+lt     = lambda x,y: x < y
+log    = math.log
+first  = lambda z:z[0]
+second = lambda z:z[1]
+last   = lambda z:z[-1]
 
 @setting
 def SYS(): return o(
@@ -43,22 +48,62 @@ class DefaultDict(dict):
         return i.setdefault(key, i.default())
 
 class Tree:
+  id = -1
   "k=key, v=value, kids=subs"
-  def __init__(i,k=None,v=None):
-    i.k, i.v = k,v
-    i.kids=[]
+  def __init__(i, k=None, v=None,
+               kids=None, meta=None):
+    i.k, i.v, i.kids = k,v,kids or []
+    i.meta = meta() if meta else None 
+    Tree.id = i.id = Tree.id + 1
+  def copyNode(i):
+    t= Tree(i.k,i.v)
+    if i.meta: t.meta = i.meta.__class__
   def left() : return i.kids[0]
   def right(): return i.kids[1]
-  def leaves(i):
+  def nodes(i):
+    yield i
+    for kid in i.kids:
+        for node in kid.nodes():
+          yield node
+  def branches(i,parents=[]):
     if i.kids:
       for kid in i.kids:
-        yield kid.leaves()
+        for what in kid.branches(parents+[i]):
+          yield what
     else:
-      yield i
-
-def tprint(t, show=identity, depth=0, pad="|.. ",lvl=0):
-  print(pad*lvl + str(t.k), end="")
-  print(show(t.v),":", depth+1)
-  for kid in t.kids: 
-    tprint(kid, show, depth+1, pad, lvl+1)
+      yield i,parents
+  def prune(i,worth=None,n=None,better=lt,
+            ok2split=lambda x,y:True):
+    t = i.copyNode()
+    here  = worth(i)
+    below = sum(map(lambda j: n(j) / n(i) * worth(j),
+                    i.kids))
+    if better(below, here):
+      if ok2split(i.left(),i.right()):
+        t.kids= map(lambda k: k.prune(worth,n,better),
+                    i.kids)
+    return t
+        
+def tprint(t, key=lambda z : z.k,
+              val=lambda z : z.v,
+              depth=0,
+              pad="|.. ",
+              lvl=0):
+  print('%3s: '% t.id,pad*lvl + str(key(t)),end="")
+  print(' =',id(val(t)),":", depth+1)
+  print("kids",t.kids)
+  if t.kids:
+    for kid in t.kids: 
+      tprint(kid, key, val, depth+1, pad, lvl+1)
   
+"""
+what the hell: how does kids end up being a Sym?
+###  _div4
+  5:  80 = 4444622432 : 1
+kids [<lib.Tree instance at 0x108f1f878>, <lib.Tree instance at 0x108f1fcb0>]
+  6:  |.. 44 = 4444620848 : 2
+kids [<lib.Tree instance at 0x108f1f950>, <lib.Tree instance at 0x108f1f998>]
+  7:  |.. |.. 31 = 4444621424 : 3
+kids cols.Sym
+/Users/timm/gits/txt/se4dm/lib.py: line 96, in tprint ==> for kid in t.kids: 'classobj' object is not iterable
+"""

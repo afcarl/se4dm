@@ -11,13 +11,14 @@ def DIV(): return o(
     maxDepth=3
     )
 
+
 def divide(lst, tiny=None,
-           small=None, max=None,
+           small=None, max=None,meta=None,
            get=lambda z:z):
   if small is None: small = the.DIV.small
   if tiny  is None: tiny  = the.DIV.tiny
   if max   is None: max   = the.DIV.maxDepth
-  class Counts(): 
+  class Sum(): 
     def __init__(i,inits=[]):
       i.n, i.sum = 0,0
       map(i.__add__,inits)
@@ -31,7 +32,7 @@ def divide(lst, tiny=None,
       return i.sum/i.n
   #----------------------------------------------
   def splitter(this): # Find best divide of 'this' lst.
-    l, r      = Counts(), Counts(get(x) for x in this)
+    l, r      = Sum(), Sum(get(x) for x in this)
     n0, mu0   = r.n, r.mu()
     cut, most = None, -1 
     for j,x  in enumerate(this):
@@ -48,7 +49,7 @@ def divide(lst, tiny=None,
   def recurse(this, max, cut=None):
     cut = splitter(this)
     here = cut or 0
-    t = Tree(get(this[here]), this)
+    t = Tree(get(this[here]), this,meta)
     if max >= 0 and cut:
       left   = this[:cut]
       right  = this[cut:]
@@ -58,4 +59,5 @@ def divide(lst, tiny=None,
     return t
   #---| main |-----------------------------------
   return recurse(sorted(lst,key=get),max-2)
+
 

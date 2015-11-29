@@ -80,3 +80,9 @@ class Sym(Log):
     tmp = i.all[z] = i.all.get(z,0) + 1
     if tmp > i.most:
       i.most,i.mode = tmp,z
+  def entropy(i,p=0):
+    for k,v in i.all.items():
+      p1 = v/i.n
+      if p1 > 0:
+        p += p1*log(p1,2)
+    return abs(p)
