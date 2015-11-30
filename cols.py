@@ -45,18 +45,30 @@ class Some:
 
 Keeping information on columns containing numerics of symbols
 
-"""      
+"""
+def items(x):
+  if boxp(x):
+    for y in x:
+      for z in items(y):
+        yield z
+  else:
+    yield x
+    
 class Log:
   def __init__(i,inits=[]):
     i.reset()
     i.n = 0 
     i.cache = Some()
-    map(i.__add__,inits)
+    i.__add__(inits)
+  def __call__(i,x):
+    return i.__add__(x)
   def __add__(i,x):
-    if x != the.COL.missing:
-      i.n += 1
-      i.cache + x
-      i._add(x)
+    for item in items(x):
+      if item != the.COL.missing:
+        i.n += 1
+        i.cache + item
+        i._add(item)
+ 
 
 class Num(Log):
   def reset(i):
