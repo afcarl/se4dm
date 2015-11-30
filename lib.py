@@ -56,8 +56,8 @@ class Tree:
     i.meta = meta() if meta else None 
     Tree.id = i.id = Tree.id + 1
   def copyNode(i):
-    t= Tree(i.k,i.v)
-    if i.meta: t.meta = i.meta.__class__
+    return Tree(i.k,i.v,[],
+                i.meta.__class__ if i.meta else None)
   def left() : return i.kids[0]
   def right(): return i.kids[1]
   def nodes(i):
@@ -76,12 +76,13 @@ class Tree:
             ok2split=lambda x,y:True):
     t = i.copyNode()
     here  = worth(i)
-    below = sum(map(lambda j: n(j) / n(i) * worth(j),
-                    i.kids))
+    below = 0
+    for k in i.kids:
+      below += n(k) / n(i) * worth(k)
     if better(below, here):
       if ok2split(i.left(),i.right()):
-        t.kids= map(lambda k: k.prune(worth,n,better),
-                    i.kids)
+        t.kids = [k.prune(worth,n,better)
+                  for k in i.kids]
     return t
         
 def tprint(t, key=lambda z : z.k,

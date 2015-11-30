@@ -4,7 +4,7 @@ sys.dont_write_bytecode = True
 
 from div import *
   
-#@ok
+@ok
 def _div1():
   DIV(small=0.01,
       maxDepth=3)
