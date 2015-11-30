@@ -11,7 +11,7 @@ def vprint(t):
   else:
     return '%s #%s' % (s1, t.kept.n)
   
-#@ok
+@ok
 def _div1():
   DIV(small=0.01,
       maxDepth=3)
