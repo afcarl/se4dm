@@ -11,11 +11,12 @@ def _div1():
   tprint(divide([round(r()**2,4) for
                  _ in xrange(3000)]))
  
-#@ok
+@ok
 def _div2():
   data =[1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2]
   tprint(divide(data))
 
+exit()
 @ok
 def _div3():
   data =[1,1,1,1,1,1,1,2,2,2,2,2,2,2,
