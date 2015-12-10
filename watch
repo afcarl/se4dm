@@ -1,1 +1,1 @@
-rerun 'python *ok.py'
+rerun "python $1ok.py"
